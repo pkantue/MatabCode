@@ -36,6 +36,8 @@ data{n,1,1}.RowTag = {'Unidentified',...
 data{n,1,1}.ColumnTag = {'Accumulated Cases',...
     'Daliy Death'};
 data{n,1,1}.date = '25-Apr-2020';
+data{n,1,1}.testTag = {'Accumulated','Daily'};
+data{n,1,1}.testing = [161004 8614];
 
 %% save data 
 save('Covid2019_Archived_Data/covid19SA.mat','data');
