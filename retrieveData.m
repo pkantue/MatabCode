@@ -4,7 +4,6 @@
 % Author: Paulin Kantue
 % Date: April 2020
 % Ver: 0.1
-%
 
 function data = retrieveData(opt)
 
