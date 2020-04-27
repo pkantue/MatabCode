@@ -37,7 +37,8 @@ clearvars;
 
 %% retrieve data (automatic)
 % 1 - get Gauteng data from 
-% data = retrieveData(1);
+% data = retrieveData(1); % retrieve SA data
+% data = retrieveData(0); % retrieve World data
 
 %% retrieve data (manual)
 load('Covid2019_Archived_Data/covid19SA.mat');

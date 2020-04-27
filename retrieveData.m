@@ -11,7 +11,7 @@ folder = 'Covid2019_Archived_Data/';
 
 if opt == 1 % Gauteng data
     prev_data = ['cov19_SA_' date]; 
-    url = 'https://www.nicd.ac.za/covid-19-update-38/';
+    url = 'https://twitter.com/nicd_sa/';
     % url = 'https://www.worldometers.info/coronavirus/country/south-africa/';
     options=weboptions; 
     options.CertificateFilename=('');     
