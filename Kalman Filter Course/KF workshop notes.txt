@@ -1,0 +1,74 @@
+% Kalman filter course - 16-17 July 2018
+
+% Properties of a Kalman filter
+% A Kalman filter is ultimately a low pass filter with explicit use of the problem knowledge.
+% A Kalman filter allows you to design the problem with as many inputs as required. 
+% Adaptive adaptive bandwidth
+% Off-line performance analysis
+
+Noise dynamics
+% 1st and 2nd moments. Which means (mean of signal and mean of the square (variance) of the signal).
+% Stationary (1st and 2nd moments are constants)
+% Ergodicity (the assumption of the using mean over a period of time 
+
+% Terminology
+% Continuous case - use PSD or Intensity
+% Discrete case - use Covariance
+
+Given a discrete model of the step time T - the Nyquist frequency is -+ 1/2T 
+
+Noise discrete
+% for the linear system - the covariance of the state and output are of interest.
+% Given the assumption that there's no correlation with current noise input and the white noise, 
+
+% Covariance matrices are symmetric 
+% Positive semi-definite 
+
+The ensemble is only carried out with the notion that 
+% Grewal and Andrews - implementing Kalman filters
+
+% Kalman filter design
+- (Time update) Prediction step has got to do with the prediction of estimate forward in time
+- (Measurement update) update the future estimate with a gain to compute the current estimate
+- The dynamics of the error covariance is correlate with the estimate.
+- Optimality of the Kalman gain is derived from the minimizing the trace (sum squared of the diagonals of the Covariance matrix) with respect to the computed gain.
+- The prediction output should be used even in the absence of the measurements.
+- The Design of covariance measurement error can be computed without the use of measurements. This can be used for system engineering decisions (which sensors will be applicable for a particular requirement).
+
+% Random constant model
+- If one believes that a bias can be modelled as a random constant one should be aware that it could also be a slow real pole (next to your imaginary axis).
+- When process noise is correlated one should bring the band limited dynamics that is driven by white noise. 
+- The bandwidth of the filter is just (A-KH).
+
+% Continuous filter
+- This shows alot more intuition given that there's no two step update. 
+- The optimal steady state Kalman gain results in a Wiener filter.
+
+% Observability
+- The ability to estimate X (state) from Z (measurement)
+- This should be mandatory for optimal design of the state matrix and transition matrix.
+- Without a full rank observability matrix (for a nonlinear model) the designer has to amend the state matrix.
+- The Kalman filter doesn't guarantee immediately the stability of estimated states for an unstable system.
+
+% Hybrid Model
+- This represents the real world applications.
+- Target tracking filter is an prime example.
+
+% Nonlinear Kalman Filter
+- 2nd order Kalman filter (extra term from the Taylor expansion equation).
+- One of the major issues is the propagation of the covariance estimation.
+- Propagation of the full state (A matrix) must be done with the nonlinear function.
+
+% Unscented Kalman filter
+- This has quite a few factors which are not very intuitive. More understanding is required.
+
+
+IMPORTANT
+- There's a place to introduce as much information about the model dynamics so that the initial conditions can be representative. This should be 
+- A Kalman filter should be considered to have more states in the event there's unmodelled dynamics that might be seen as errors (propagated through a Kalman gain).
+- The aim to initialize your the covariance error.
+- The Q (process covariance) should be on the 'higher' side. This results in harder ramp in the Kalman gain between measurements.
+- The R (measurement covariance) should be dependent on the sensor quality. Cheap sensor should be high (believe other sensors or estimates), Pricey sensor should be low (believe the measurements more).
+
+
+
