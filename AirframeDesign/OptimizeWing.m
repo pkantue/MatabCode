@@ -2,7 +2,7 @@
 % function given the various parameters variations
 
 weight = 1.5; % (kg)
-b = 2.05; % wing span (single) (m)
+b = 1.05; % wing span (single) (m)
 c_r = 0.2; % root chord (m)
 t_r = 0.4; % taper ratio (m)
 V = 9; % glide velocity (m/s)
@@ -17,7 +17,6 @@ rho = 0.95;
 c_t = t_r*c_r;      % tip chord (m)
 e = 0.8;        % wing efficiency factor (guestimated)
 ang_LE = 31;    % leading edge angle (degrees)
-
 
 weight = weight*9.81;
 
@@ -87,7 +86,7 @@ VDesc = sqrt((2*weight)/(rho*CL_desc*S));
 
 CD = C_D0 + k*CLminD^2;
 
-LD = CLminD/C_D0;
+LD = 0.5*CLminD/C_D0;
 
 %3-D lift slope
 Meff = M*cosd(ang_LE);

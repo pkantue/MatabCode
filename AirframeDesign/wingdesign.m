@@ -92,7 +92,7 @@ VDesc = sqrt((2*weight)/(rho*CL_desc*S));
 
 CD = C_D0 + k*CLminD^2;
 
-LD = CLminD/C_D0;
+LD = 0.5*CLminD/C_D0;
 
 %3-D lift slope
 Meff = M*cosd(ang_LE);
