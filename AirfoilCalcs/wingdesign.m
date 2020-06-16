@@ -34,8 +34,16 @@ S = b^2/AR;
 
 k = 1/(AR*pi*e);
 
-% mean aerodynamic chord
+% mean aerodynamic chord (MAC)
 c_mac = (2*c_r/3)*(1 + t_r + t_r^2)/(1 + t_r);
+
+% y-location of MAC
+y_r = 0; % y-coordinate of the root chord
+y_mac = y_r + (b/2)*(1+2*t_r)/(3+3*t_r);
+
+% x_location of MAC
+x_r = 0; % x_coordinate of the root chord
+x_mac = 0.25*c_mac + x_r + sind(ang_LE)*(1+2*t_r)/(3+3*t_r);
 
 % sweep angle at 1/4 chord
 ang_c4 = atand(tand(ang_LE) - (0.25)*(2*c_r/b)*(1-t_r)); %ang_xc(ang_LE,0.25,b,c_r,t_r);
