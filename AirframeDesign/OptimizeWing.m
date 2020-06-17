@@ -1,8 +1,8 @@
 % This script computes the optimal static stability using an optimization
 % function given the various parameters variations
 
-weight = 1.5; % (kg)
-b = 1.05; % wing span (single) (m)
+weight = 2.5; % (kg)
+b = 2.05; % wing span (single) (m)
 c_r = 0.2; % root chord (m)
 t_r = 0.4; % taper ratio (m)
 V = 9; % glide velocity (m/s)
@@ -12,7 +12,7 @@ t_c = 0.4; % max thickness to chord
 x_c = 0.4;
 alpha_0 = -4; %NACA 4412
 
-% parameters 
+% parameters
 rho = 0.95;
 c_t = t_r*c_r;      % tip chord (m)
 e = 0.8;        % wing efficiency factor (guestimated)
@@ -42,51 +42,66 @@ x_mac = 0.25*c_mac + x_r + sind(ang_LE)*(1+2*t_r)/(3+3*t_r);
 % sweep angle at 1/4 chord
 ang_c4 = atand(tand(ang_LE) - (0.25)*(2*c_r/b)*(1-t_r)); %ang_xc(ang_LE,0.25,b,c_r,t_r);
 
-% mach number
-M = V/340.3;
+%% execute until the correct velocity is achieved
+VminD = 0;
+err = VminD - V;
 
-% sweep angle at max t/c
-ang_tc = atand(tand(ang_LE) - (t_c)*(2*c_r/b)*(1-t_r)); %ang_xc(ang_LE,t_c,b,c_r,t_r);
-
-%------------------base drag calculation------------------------
-
-% Form factor drag
-F = (1 + (0.6/x_c)*t_c + 100*t_c^4)*(1.34*M^0.18*(cosd(ang_tc))^0.28);
-
-% Inteference factor
-Q = 1.2;
-
-% Friction coefficient
-xi = 15.11e-6; % kinematic viscosity of air @ 20C
-Rex = V*cosd(ang_LE)*c_mac/xi;
-
-if sqrt(Rex) > 1000
-    C_f = 0.455/(((log10(Rex))^2.58)*(1 + 0.144*M^2)^0.65); %turbulent
-else
-    C_f = 1.328/sqrt(Rex); % laminar
+while abs(err) > 1e-3
+    
+    % mach number
+    M = V/340.3;
+    
+    % sweep angle at max t/c
+    ang_tc = atand(tand(ang_LE) - (t_c)*(2*c_r/b)*(1-t_r)); %ang_xc(ang_LE,t_c,b,c_r,t_r);
+    
+    %------------------base drag calculation------------------------
+    
+    % Form factor drag
+    F = (1 + (0.6/x_c)*t_c + 100*t_c^4)*(1.34*M^0.18*(cosd(ang_tc))^0.28);
+    
+    % Inteference factor
+    Q = 1.2;
+    
+    % Friction coefficient
+    xi = 15.11e-6; % kinematic viscosity of air @ 20C
+    Rex = V*cosd(ang_LE)*c_mac/xi;
+    
+    if sqrt(Rex) > 1000
+        C_f = 0.455/(((log10(Rex))^2.58)*(1 + 0.144*M^2)^0.65); %turbulent
+    else
+        C_f = 1.328/sqrt(Rex); % laminar
+    end
+    
+    % wetted area
+    if t_c > 0.05
+        S_wet = S*(1.977+0.52*t_c); %thick airfoils
+    else
+        S_wet = 2.003*S; % thin airfoils
+    end
+    
+    C_D0 = C_f*F*Q*(S_wet/S);
+    %---------------------------------------------------------------
+    
+    CLminD = sqrt(C_D0/k);
+    CL_desc = sqrt(3*C_D0/k);
+    
+    % weight to sustain maximum L/D
+    
+    VminD = sqrt((2*weight)/(rho*CLminD*S));
+    VDesc = sqrt((2*weight)/(rho*CL_desc*S));
+    
+    % handle of velocity error dynamics
+    err = VminD - V;    
+    dV = err*0.05;    
+    V = V + dV;
+    
 end
 
-% wetted area
-if t_c > 0.05
-    S_wet = S*(1.977+0.52*t_c); %thick airfoils
-else
-    S_wet = 2.003*S; % thin airfoils
-end
-
-C_D0 = C_f*F*Q*(S_wet/S);
-%---------------------------------------------------------------
-
-CLminD = sqrt(C_D0/k);
-CL_desc = sqrt(3*C_D0/k);
-
-% weight to sustain maximum L/D
-
-VminD = sqrt((2*weight)/(rho*CLminD*S));
-VDesc = sqrt((2*weight)/(rho*CL_desc*S));
-
+%%
 CD = C_D0 + k*CLminD^2;
 
-LD = 0.5*CLminD/C_D0;
+% compute maximum L/D ratio
+LD_max = CLminD/CD;
 
 %3-D lift slope
 Meff = M*cosd(ang_LE);
