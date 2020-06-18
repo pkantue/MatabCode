@@ -1,16 +1,18 @@
 % This script computes the optimal static stability using an optimization
 % function given the various parameters variations
 
+clearvars;
+
 weight = 2.5; % (kg)
 b = 2.05; % wing span (single) (m)
 c_r = 0.2; % root chord (m)
 t_r = 0.4; % taper ratio (m)
-V = 9; % glide velocity (m/s)
+V = 9; % initial cruise velocity (m/s)
 
-% airfoil parameters (guestimated)
-t_c = 0.4; % max thickness to chord
-x_c = 0.4;
-alpha_0 = -4; %NACA 4412
+% airfoil parameters 
+name = 'mh60.dat';
+[t_c,x_c] = getAirfoilData(name);
+alpha_0 = 0; %NACA 4412
 
 % parameters
 rho = 0.95;
@@ -91,8 +93,8 @@ while abs(err) > 1e-3
     VDesc = sqrt((2*weight)/(rho*CL_desc*S));
     
     % handle of velocity error dynamics
-    err = VminD - V;    
-    dV = err*0.05;    
+    err = VminD - V;
+    dV = err*0.05;
     V = V + dV;
     
 end
