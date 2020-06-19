@@ -9,7 +9,7 @@ close all
 
 COMPUTE_TARGET_CD = 0;
 PLOT_FIG = 1;
-SAVE_DATA = 0;
+SAVE_DATA = 1;
 
 %%
 name = 'mh60.dat';
@@ -36,8 +36,8 @@ Re = V*c_mac/xi;
 
 [pol,foil] = xfoil(data,alpha,Re,Mach,'oper iter 250');
 
-data_pol{1,i}.pol = pol;
-data_pol{1,i}.foil = foil;
+AFdata{1,i}.pol = pol;
+AFdata{1,i}.foil = foil;
 
 end
 %% plotting
@@ -68,5 +68,5 @@ end
 %% save data
 if SAVE_DATA
 [~,nm,~] = fileparts(name);
-save(nm,'foil','pol');
+save(nm,'AFdata');
 end
