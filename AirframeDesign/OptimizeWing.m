@@ -3,7 +3,7 @@
 
 clearvars;
 
-weight = 2.5; % (kg)
+weight = 1.5; % (kg)
 b = 2.05; % wing span (single) (m)
 c_r = 0.2; % root chord (m)
 t_r = 0.4; % taper ratio (m)
@@ -66,7 +66,7 @@ while abs(err) > 1e-3
     
     % Friction coefficient
     xi = 15.11e-6; % kinematic viscosity of air @ 20C
-    Rex = V*cosd(ang_LE)*c_mac/xi;
+    Rex = V*c_mac/xi;
     
     if sqrt(Rex) > 1000
         C_f = 0.455/(((log10(Rex))^2.58)*(1 + 0.144*M^2)^0.65); %turbulent
