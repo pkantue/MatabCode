@@ -18,7 +18,6 @@ if exist(fullname,'file')
     data = dlmread(['Datapoints/' name],'',1,0);
 else
     error('No file exists by that name. Try again');
-    return;
 end
 
 targetCDperc = 0.15; % target CD for cruise CL

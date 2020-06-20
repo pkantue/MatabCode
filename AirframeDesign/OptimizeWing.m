@@ -6,11 +6,11 @@ COMPUTE_THEORY = 0;
 COMPUTE_XFOIL = 1; %takes into account boundary later viscosity (2D)
 
 %%
-weight = 1.5; % (kg)
-b = 2.05; % wing span (single) (m)
-c_r = 0.25; % root chord (m)
-t_r = 0.8; % taper ratio (m)
-ang_LE = 25; % leading edge angle (degrees)
+weight = 1.6; % (kg)
+b = 2.0; % wing span (single) (m)
+c_r = 0.59; % root chord (m)
+t_r = 0.3; % taper ratio (m)
+ang_LE = 23; % leading edge angle (degrees)
 V0 = 9; % initial cruise velocity (m/s)
 
 V = V0; % initial theoretical value
@@ -20,7 +20,7 @@ name = 'mh60.dat';
 [t_c,x_c] = getAirfoilData(name);
 
 % parameters
-rho = 0.95;
+rho = 1.1965;
 xi = 15.11e-6; % kinematic viscosity of air @ 20C
 c_t = t_r*c_r;      % tip chord (m)
 e = 0.8;        % wing efficiency factor (guestimated)
@@ -34,6 +34,11 @@ AR = (2*b)/(c_r + c_t);
 S = b^2/AR;
 
 k = 1/(AR*pi*e);
+
+%% geometric properties
+x_offset = (b/2)*sind(ang_LE);
+
+ang_TE = atand((x_offset+c_t-c_r)/(b/2));
 
 % mean aerodynamic chord (MAC)
 c_mac = (2*c_r/3)*(1 + t_r + t_r^2)/(1 + t_r);
@@ -111,7 +116,11 @@ if COMPUTE_THEORY
     % compute maximum L/D ratio
     LD_max = CLminD/CD;
     
+    % zero-lift angle (unknown)
+    alpha_0 = 0;
+    
 end
+
 %% Xfoil resulting 2D L/D
 if COMPUTE_XFOIL
     
@@ -119,6 +128,8 @@ if COMPUTE_XFOIL
     [~,nm,~] = fileparts(name);
     if exist(['Airfoils/' nm '.mat'],'file')
         load(['Airfoils/' nm '.mat']);
+    else
+        error('There is associated Xfoil processed file.');
     end
     
     Rex = V*c_mac/xi;
@@ -129,7 +140,7 @@ if COMPUTE_XFOIL
     % get the closest Reynolds
     for i = 1:length(AFdata)
         Rvec(i) = AFdata{1,i}.pol.Re;
-    end    
+    end
     [val,ind] = min(abs(Rvec-Rex));
     
     if CLx > max(AFdata{1,ind}.pol.CL)
@@ -142,6 +153,8 @@ if COMPUTE_XFOIL
     CDx = interp1(AFdata{1,ind}.pol.alpha,AFdata{1,ind}.pol.CD,alphx);
     Cmx = interp1(AFdata{1,ind}.pol.alpha,AFdata{1,ind}.pol.Cm,alphx);
     
+    % compute zero-lift angle
+    alpha_0 = interp1(AFdata{1,ind}.pol.CL,AFdata{1,ind}.pol.alpha,0);
 end
 
 %% 3D lift characteristics - theoretical
@@ -151,10 +164,23 @@ M = V/340.3;
 Meff = M*cosd(ang_LE);
 beta = sqrt(1-Meff^2);
 
-alpha_0 = 0; %NACA 4412
-
 slope = (2*pi*AR)/(2 + sqrt(4 + ((AR*beta)^2)*(1 + (tand(ang_tc)/beta)^2)));
+
+Slope_vec = AR_sensitivity(beta,AR,ang_tc);
+
 slope = slope*pi/180;
 % trim settings
-
-% alpha = CLminD/slope + alpha_0;
+if exist('CLminD','var')
+    alpha = CLminD/slope + alpha_0;
+elseif exist('CLx','var')
+    alpha = CLx/slope + alpha_0;
+end
+    
+%%
+function [vec] = AR_sensitivity(beta,AR0,ang_tc)
+ARvec = 0.5*AR0:0.01:1.5*AR0;
+for i = 1:length(ARvec)
+    AR = ARvec(i);
+    vec(i) = (2*pi*AR)/(2 + sqrt(4 + ((AR*beta)^2)*(1 + (tand(ang_tc)/beta)^2)));
+end
+end
