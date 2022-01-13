@@ -1,18 +1,32 @@
 % This script computes the optimal static stability using an optimization
 % function given the various parameters variations
 
+% The equations above are taken from the following journal paper:
+% https://core.ac.uk/download/pdf/79175663.pdf
+
 clearvars;
 COMPUTE_THEORY = 0;
 COMPUTE_XFOIL = 1; %takes into account boundary later viscosity (2D)
 
-%%
+%% LOCUS
 weight = 1.6; % (kg)
 b = 2.0; % wing span (single) (m)
 c_r = 0.59; % root chord (m)
-t_r = 0.3; % taper ratio (m)
+c_t = 0.177; % tip chord (m)
+t_r = c_t/c_r; % taper ratio (-)
 ang_LE = 23; % leading edge angle (degrees)
 V0 = 9; % initial cruise velocity (m/s)
 
+%% LOCUS MINI
+weight = 0.241; % (kg)
+b = 0.6; % wing span (single) (m)
+c_r = 0.18; % root chord (m)
+c_t = 0.05; % tip chord (m)
+t_r = c_t/c_r; % taper ratio (-)
+ang_LE = 21.8; % leading edge angle (degrees)
+V0 = 9; % initial cruise velocity (m/s)
+
+%%
 V = V0; % initial theoretical value
 
 % airfoil parameters
@@ -49,7 +63,7 @@ y_mac = y_r + (b/2)*(1+2*t_r)/(3+3*t_r);
 
 % x_location of MAC
 x_r = 0; % x_coordinate of the root chord
-x_mac = 0.25*c_mac + x_r + sind(ang_LE)*(1+2*t_r)/(3+3*t_r);
+x_mac = 0.25*c_mac + x_r + (b/2)*sind(ang_LE)*(1+2*t_r)/(3+3*t_r);
 
 % sweep angle at 1/4 chord
 ang_c4 = atand(tand(ang_LE) - (0.25)*(2*c_r/b)*(1-t_r)); %ang_xc(ang_LE,0.25,b,c_r,t_r);
